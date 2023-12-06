@@ -46,17 +46,53 @@ function displayStatus(data) {
 /* Making a POST Request */
 document.getElementById("submit").addEventListener("click", e => postForm(e));  // adds event listener to the Run Checks button with 'submit' id
 
+
+function processOptions(form) {
+    let optArray = [];
+    for (let entry of form.entries()) {
+        if (entry[0] === "options") {
+            optArray.push(entry[1]);
+        }
+    }
+    form.delete("options"); // delete all occurrences of options in our form data;
+    form.append("options", optArray.join()); // appends the key called 'options' and the value 'optArray'
+    //uses the join method to convert it back to a string which by default is separated by commas 
+    //if we don't specify a delimiter in join;
+    return form;
+}
+
+
 async function postForm(e) {  // it needs to be an async function. So that we can await the results of our promise
     // gets the form data (JavaScript provides an interface to do that. It's called the FormData interface.):
     //creates a new formData object
-    const form = new FormData(document.getElementById("checksform")); //captures all of the fields in a HTML form and return it as an object
+    const form = processOptions(new FormData(document.getElementById("checksform"))); //captures all of the fields in a HTML form and return it as an object
     // the formData object has several default  methods that allow us to manipulate the data -> https://developer.mozilla.org/en-US/docs/Web/API/FormData
-    /*
+
+
+    /* testing postForm function where were: const form = new FormData(document.getElementById("checksform")); */
     // the entries method can iterate through to see the form entries.
+    /** TESTING CODE
     for (let entry of form.entries()) {  // iterates through each of the form entries putting it in 'entry'
         console.log(entry);  // when we  click on the Run Checks button, we should see the data logged in the console
     }
     */
+    /*  logs:
+    ['filename', '']
+    ['url', 'https://mattrudge.net/assets/js/menu.js'];
+    ['options', 'es6'];
+    ['options', 'es8'];
+    ['options', 'harsh'];
+    ['options', 'jquery'];
+    ['options', 'relax'];
+    ['options', 'strict'];
+    ['code', 'testing post request']
+    */
+    // every time we've clicked on an option it created another key with the value of option so this is not sending as a comma separated list
+    //but "this API accepts 'options' parameter only as a comma separated list of options" so we need processOptions(form) function
+    //testing result after processOptions(form) function was included:
+    //['options', 'es6,es8,harsh,jquery,relax,strict'] here the 'options' parameter is a string of comma separated options
+    
+
     // then give this object to "fetch":
     const response = await fetch(API_URL, {   //  'await fetch' because it  returns a promise
         method: "POST",  //this will make a POST request to the API,authorize it with the API key and attach the form as the body of the request
