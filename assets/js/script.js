@@ -12,12 +12,17 @@ document.getElementById("status").addEventListener("click", e => getStatus(e));
 async function getStatus(e) {
     // use JavaScript’s template literals here
     const queryString = `${API_URL}?api_key=${API_KEY}`;
-    // let’s “await” the response
-    const response = await fetch(queryString);
+    //API using fetch()
+    /*
+    The Fetch API provides a JavaScript interface for accessing and manipulating parts of the protocol,such as requests and responses. 
+    It also provides a global fetch() method that provides an easy, logical way to fetch resources asynchronously across the network.
+    https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+    */
+    const response = await fetch(queryString);  // let’s “await” the response
     // When the response comes back, we need to convert it to json
     // the json() method also returns a promise, so we need to await that too
     // at this stage in our function, we can assume that we'll have some data back
-    const data = await response.json();
+    const data = await response.json();   //  parses JSON response into native JavaScript objects
     if (response.ok) {   // a property is set on the response object and this property is the “ok” property.
         //if the server returns the HTTP status code of 200 then our request has been successful and the “ok” property will be set to True.
         //if it returns an error code, then the “ok” property will be set to False.
