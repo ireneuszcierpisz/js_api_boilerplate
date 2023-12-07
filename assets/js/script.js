@@ -25,6 +25,7 @@ async function getStatus(e) {
         // console.log(data.expiry);
         displayStatus(data);  //call the displayStatus function
     } else {
+        displayException(data);
         throw new Error(data.error);  // uses the built-in JavaScript error handler to throw a new error
     }                           // 'data.error' it's the descriptive  message from the json that's been returned
     // an error could arise for all sorts of reasons - the API key could have expired, we could have typed in the URL wrongly,  
@@ -89,9 +90,11 @@ async function postForm(e) {  // it needs to be an async function. So that we ca
     */
     // every time we've clicked on an option it created another key with the value of option so this is not sending as a comma separated list
     //but "this API accepts 'options' parameter only as a comma separated list of options" so we need processOptions(form) function
-    //testing result after processOptions(form) function was included:
-    //['options', 'es6,es8,harsh,jquery,relax,strict'] here the 'options' parameter is a string of comma separated options
-    
+    //testing results after processOptions(form) function was included:
+    //['filename', '']
+    //['url', 'https://mattrudge.net/assets/js/menu.js'];
+    //['options', 'es6,es8,harsh,jquery,relax,strict']  <--here the 'options' parameter is a string of comma separated options
+    // ['code', 'testing post request']
 
     // then give this object to "fetch":
     const response = await fetch(API_URL, {   //  'await fetch' because it  returns a promise
@@ -110,12 +113,13 @@ async function postForm(e) {  // it needs to be an async function. So that we ca
         // console.log(data);
         displayErrors(data);      // display the data in a modal by passing the data into the displayErrors() function
     } else {
+        displayException(data);
         throw new Error(data.error);  // uses the built-in JavaScript error handler to throw a new error
     }                           // 'data.error' that's the descriptive  message from the json that's been returned
 
 }
 
-// display the data in a modal
+// display the values from the 'data' json object (got as a response from the API) in a modal
 function displayErrors(data) {
 
     let results = "";
@@ -135,6 +139,25 @@ function displayErrors(data) {
     document.getElementById("resultsModalTitle").innerText = heading;
     document.getElementById("results-content").innerHTML = results;
     resultsModal.show();
+}
+
+
+/*
+Exceptions occur when the JSHint API encounters an error processing a request.
+According to the instruction Exceptions are provided in this format:
+{"error":"No or invalid API key","error_no":3,"status_code":403}
+*/
+// Displays any API exceptions in a modal:
+function displayException(data) {
+    let heading = `An Exception Occurred`;
+
+    let results = `<div>The API returned status code ${data.status_code}</div>`;
+    results += `<div>Error number: <strong>${data.error_no}</strong></div>`;
+    results += `<div>Error text: <strong>${data.error}</strong></div>`;
+
+    document.getElementById("resultsModalTitle").innerText = heading;
+    document.getElementById("results-content").innerHTML = results;
+    resultsModal.show();   
 }
 
 
